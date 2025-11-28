@@ -4,6 +4,7 @@ import (
 	"PepeVault/handlers"
 	"PepeVault/middlewares"
 	"database/sql"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,23 +17,30 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	router.LoadHTMLGlob("templates/*")
 
 	router.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(200, "index.html", nil)
+		ctx.HTML(http.StatusOK, "index.html", nil)
 	})
 	router.GET("/login", func(ctx *gin.Context) {
-		ctx.HTML(200, "login.html", nil)
+		ctx.HTML(http.StatusOK, "login.html", nil)
 	})
 	router.POST("/login", handlers.LoginUser(db))
 	router.GET("/register", func(ctx *gin.Context) {
-		ctx.HTML(200, "login.html", nil)
+		ctx.HTML(http.StatusOK, "register.html", nil)
 	})
 
 	protected := router.Group("/")
 	protected.Use(middlewares.ValidateSession(db))
 	{
-		protected.GET("/panel", handlers.PanelHandler)
-
-		// Vault Functions
-		// protected.GET("/panel/vault", handlers.GetVaults)
+		protected.GET("/vault/", func(ctx *gin.Context) {
+			ctx.HTML(http.StatusOK, "vault.html", gin.H{
+				"ShowModal": false,
+			})
+		})
+		protected.GET("/vault/new", func(ctx *gin.Context) {
+			ctx.HTML(http.StatusOK, "vault.html", gin.H{
+				"ShowModal": true,
+			})
+		})
+		protected.POST("/vault/new", handlers.CreateVault(db))
 	}
 
 	return router

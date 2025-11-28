@@ -21,7 +21,6 @@ func ValidateSession(db *sql.DB) gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-
 		var UserID string
 		var expires time.Time
 		err = db.QueryRow(`SELECT "User_ID", "Expires_at" FROM public."Sessions" WHERE "Token" = $1`, cookie).Scan(&UserID, &expires)

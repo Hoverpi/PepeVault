@@ -1,0 +1,42 @@
+{{/* templates/sidebar.html */}}
+{{define "sidebar"}}
+  <!-- reusable background blobs + sidebar + menu button -->
+  <div class="bg-blobs">
+    <div class="blob blob-blue"></div>
+    <div class="blob blob-orange"></div>
+  </div>
+
+  <button class="menu-btn" onclick="toggleSidebar()" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <nav class="sidebar" id="sidebar" aria-hidden="false">
+      <div class="nav-links">
+          <a href="/vault" class="nav-item">Vault</a>
+          <a href="/generator" class="nav-item">Password Generator</a>
+      </div>
+
+      <div class="user-section">
+          <img src="https://ui-avatars.com/api/?name=Hover+Pi&background=333&color=fff" alt="User" class="user-avatar">
+          <span class="username">Hoverpi</span>
+      </div>
+  </nav>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+      const sidebar = document.getElementById('sidebar');
+      const btn = document.querySelector('.menu-btn');
+      if (!sidebar.contains(event.target) && !btn.contains(event.target) && sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+      }
+    });
+  </script>
+{{end}}

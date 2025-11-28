@@ -15,8 +15,8 @@ import (
 func LoginUser(db *sql.DB) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var body struct {
-			UUID_v4  string `form:"uuid_v4" json:"uuid_v4" binding:"required"`
-			Password string `form:"password" json:"password" binding:"required"`
+			reqUUID_v4  string `form:"uuid_v4" json:"uuid_v4" binding:"required"`
+			reqPassword string `form:"password" json:"password" binding:"required"`
 		}
 		// Will bind depending on Content-Type (form or json). If required fields missing -> error.
 		if err := ctx.ShouldBind(&body); err != nil {
@@ -28,8 +28,8 @@ func LoginUser(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		var Password string
-		err := db.QueryRow(`SELECT "Password" FROM public."User" WHERE "ID" = $1`, body.UUID_v4).Scan(&Password)
+		var resPassword string
+		err := db.QueryRow(`SELECT "Password" FROM public."User" WHERE "ID" = $1`, body.reqUUID_v4).Scan(&resPassword)
 
 		if err != nil {
 			if err == sql.ErrNoRows { // QueryRow return it
@@ -47,8 +47,8 @@ func LoginUser(db *sql.DB) gin.HandlerFunc {
 		}
 
 		// TODO: Compare master password
-		// if err := body.UUID_v4 == Password; err != nil {}
-		if body.Password != Password {
+		// if err := body.reqUUID_v4 == Password; err != nil {}
+		if body.reqPassword != resPassword {
 			// password mismatch
 			if ctx.ContentType() == "application/json" {
 				ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
@@ -60,7 +60,7 @@ func LoginUser(db *sql.DB) gin.HandlerFunc {
 
 		// Create session cookie
 		const sessionTTL = 24 * time.Hour
-		token, err := auth.CreateSession(ctx.Writer, db, body.UUID_v4, sessionTTL)
+		token, err := auth.CreateSession(ctx.Writer, db, body.reqUUID_v4, sessionTTL)
 		if err != nil {
 			log.Println("create session error:", err)
 			if ctx.ContentType() == "application/json" {
@@ -75,13 +75,7 @@ func LoginUser(db *sql.DB) gin.HandlerFunc {
 		if ctx.ContentType() == "application/json" {
 			ctx.JSON(http.StatusOK, gin.H{"ok": true, "token": token})
 		} else {
-			ctx.Redirect(http.StatusSeeOther, "/panel")
+			ctx.Redirect(http.StatusSeeOther, "/vault")
 		}
 	}
-}
-
-func PanelHandler(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "welcome to the protected panel",
-	})
 }

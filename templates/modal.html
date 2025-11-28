@@ -1,0 +1,59 @@
+{{/* templates/modal.html */}}
+{{define "modal"}}
+
+<form action="/vault/new" method="post">
+  <div class="modal-overlay" id="vaultModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Item Details</h2>
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="input-group">
+          <label>Name</label>
+          <div class="input-wrapper">
+            <input type="text" placeholder="Google Account" id="service" name="service">
+            <button class="edit-btn"><i class="fa-solid fa-pencil"></i></button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Description</label>
+          <div class="input-wrapper">
+            <input type="text" placeholder="Main email for business" id="description" name="description">
+            <button class="edit-btn"><i class="fa-solid fa-pencil"></i></button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>URL</label>
+          <div class="input-wrapper">
+            <input type="text" placeholder="https://google.com" id="url" name="url">
+            <button class="edit-btn"><i class="fa-solid fa-pencil"></i></button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <div class="input-wrapper">
+            <input type="password" value="" readonly>
+            <input type="text" placeholder="SuperSecret123!" id="password" name="password">
+            <button class="edit-btn"><i class="fa-solid fa-pencil"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-save">Save</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+  <script>
+    function openModal() { document.getElementById('vaultModal').classList.add('active'); }
+    function closeModal(){ document.getElementById('vaultModal').classList.remove('active'); }
+  </script>
+  {{end}}

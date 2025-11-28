@@ -1,0 +1,369 @@
+/* static/css/vault.css */
+
+/* --- Variables (override per page via body classes) --- */
+:root{
+  --bg-base: #05060a;               /* background page base */
+  --overlay-opacity: 0.60;          /* modal and overlays default */
+  --card-bg: rgba(255,255,255,0.03);
+  --card-hover-bg: rgba(255,255,255,0.07);
+  --primary: #007bff;
+  --primary-strong: #0056b3;
+  --muted: #aaa;
+  --text-primary: #eaeef5;
+  --glass-border: rgba(255,255,255,0.1);
+}
+
+/* darker / higher contrast page modifiers */
+.page-darker {
+  --overlay-opacity: 0.75;    /* darker overall overlay */
+  --card-bg: rgba(255,255,255,0.02);
+  --card-hover-bg: rgba(255,255,255,0.06);
+  --muted: #ddd;
+  --text-primary: #ffffff;
+}
+
+.text-bright {
+  --muted: #eee;
+  --text-primary: #fff;
+}
+
+/* body base */
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* --- BLobs (shared background visuals) --- */
+.bg-blobs {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.9;
+  mix-blend-mode: screen;
+}
+
+/* example blobs, tweak positions as you like */
+.blob-blue {
+  width: 400px;
+  height: 400px;
+  left: -120px;
+  top: -80px;
+  background: radial-gradient(circle at 30% 30%, rgba(0,123,255,0.95), rgba(0,123,255,0.25) 60%, transparent 70%);
+}
+
+.blob-orange {
+  width: 380px;
+  height: 380px;
+  right: -100px;
+  bottom: -140px;
+  background: radial-gradient(circle at 70% 70%, rgba(255,130,70,0.95), rgba(255,130,70,0.2) 60%, transparent 70%);
+}
+
+/* --- Sidebar + menu button --- */
+.menu-btn {
+  position: fixed;
+  left: 18px;
+  top: 18px;
+  z-index: 110;
+  width: 44px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.menu-btn span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: rgba(255,255,255,0.7);
+  margin: 3px 0;
+  transition: all .2s;
+}
+
+/* sidebar - increase top padding so menu button doesn't overlap first item */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 220px;
+  padding: 72px 16px 28px 16px; /* <-- moved content down from top */
+  transform: translateX(-100%);
+  transition: transform .25s cubic-bezier(.2,.9,.2,1);
+  z-index: 105;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-right: 1px solid rgba(255,255,255,0.03);
+  backdrop-filter: blur(6px);
+}
+
+.sidebar.active { transform: translateX(0); }
+
+/* nav links - icon above label layout */
+.nav-links {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-bottom:20px;
+}
+
+/* nav item now supports an icon above text.
+   HTML recommendation: <a class="nav-item" href="/vault"><i class="fa fa-lock nav-icon"></i><span class="nav-label">Vault</span></a>
+*/
+.nav-item {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;   /* icon above label */
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;                 /* small gap between icon and label */
+  width: 100%;
+  box-sizing: border-box;
+  transition: background .18s, color .18s, transform .12s;
+}
+
+/* tighter visual spacing - pull label slightly upwards so it sits closer to icon */
+.nav-item .nav-label {
+  font-size: 15px;
+  line-height: 1;
+  transform: translateY(-4px); /* <-- pulls the text up toward the icon */
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* icon sizing */
+.nav-item .nav-icon {
+  font-size: 20px;
+  display: block;
+  line-height: 1;
+  color: var(--primary);
+  background: rgba(0,123,255,0.06);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* hover / active states */
+.nav-item:hover,
+.nav-item:focus {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.02);
+  transform: translateY(-3px);
+}
+.nav-item:hover .nav-label,
+.nav-item:focus .nav-label { color: var(--text-primary); }
+
+/* user section */
+.user-section {
+  position: absolute;
+  bottom: 20px;
+  left: 16px;
+  right: 16px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.user-avatar {
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.username {
+  color: var(--muted);
+  font-size: 14px;
+  /* nudge username a little higher so it aligns nicely with avatar */
+  transform: translateY(-2px);
+}
+
+/* --- Main content area (leave room for sidebar) --- */
+.main-content {
+  position: relative;
+  z-index: 10; /* in front of blobs */
+  padding: 28px;
+  padding-left: calc(28px + 40px); /* ensure some left spacing from menu button */
+  margin-left: 60px; /* small margin so content not under menu */
+  max-width: 1200px;
+  margin-right: auto;
+}
+
+/* vault header (unchanged, but using variables) */
+.vault-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 0 10px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background: var(--primary-strong);
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.28);
+}
+
+/* vault grid */
+.vault-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* cards */
+.vault-card {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.vault-card:hover {
+  transform: translateY(-5px);
+  background: var(--card-hover-bg);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.card-icon {
+  font-size: 24px;
+  color: var(--primary);
+  background: rgba(0,123,255,0.08);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.card-info h3 { font-size: 18px; margin-bottom: 5px; color: var(--text-primary); }
+.card-info p { font-size: 13px; color: var(--muted); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+.btn-show {
+  margin-top: auto;
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-show:hover { background: var(--primary); color: white; }
+
+/* modal overlay uses variable for opacity so .page-darker becomes darker */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,var(--overlay-opacity));
+  backdrop-filter: blur(5px);
+  display:flex; align-items:center; justify-content:center;
+  z-index: 1000;
+  opacity: 0; visibility: hidden; transition: .25s;
+}
+.modal-overlay.active { opacity: 1; visibility: visible; }
+
+/* modal box */
+.modal-box {
+  background: #0a0a14;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+
+.modal-header { padding:20px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; }
+.modal-header h2 { font-size:20px; color:var(--text-primary); }
+.close-modal { background:none; border:none; color:var(--muted); font-size:24px; cursor:pointer; }
+.close-modal:hover { color: var(--text-primary); }
+
+.modal-body { padding:20px; display:flex; flex-direction:column; gap:15px; }
+.input-group label { display:block; font-size:12px; color: var(--primary); margin-bottom:5px; font-weight:600; text-transform:uppercase; }
+.input-wrapper { position:relative; display:flex; align-items:center; }
+.input-wrapper input {
+  width:100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding:12px 40px 12px 15px;
+  border-radius:8px;
+  color:var(--text-primary);
+  font-size:14px;
+  outline:none;
+}
+.input-wrapper input:focus { border-color: var(--primary); background: rgba(255,255,255,0.06); }
+
+.edit-btn { position:absolute; right:10px; background:none; border:none; color:var(--muted); cursor:pointer; font-size:14px; }
+.edit-btn:hover { color: var(--primary); }
+
+.modal-footer { padding:20px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:flex-end; gap:10px; }
+.btn-cancel {
+  background:transparent; border:1px solid rgba(255,255,255,0.18); color: #ccc; padding:10px 20px; border-radius:6px; cursor:pointer;
+}
+.btn-cancel:hover { border-color:#fff; color:#fff; }
+.btn-save { background: var(--primary); border:none; color:#fff; padding:10px 20px; border-radius:6px; cursor:pointer; }
+.btn-save:hover { background: var(--primary-strong); }
+
+/* Responsive behavior: on small screens keep sidebar narrow and show icons only */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 78px;
+    padding: 72px 8px 20px 8px;
+  }
+
+  .nav-links { gap: 12px; }
+
+  /* hide labels on small widths to keep a compact icon-only sidebar */
+  .nav-item .nav-label { 
+    display: none;
+  }
+
+  .nav-item .nav-icon {
+    padding: 10px;
+    font-size: 20px;
+  }
+
+  .main-content {
+    padding-left: calc(28px + 40px);
+    margin-left: 72px; /* leave room for the compact sidebar */
+  }
+
+  .menu-btn { left: 12px; top: 12px; }
+}
+
+/* larger screens: give more room for main content */
+@media (min-width: 1000px) {
+  .main-content { padding-left: 300px; } /* give more room when big screen */
+  .sidebar { width: 260px; padding: 84px 20px 28px 20px; }
+  .nav-item .nav-label { font-size: 16px; transform: translateY(-3px); }
+  .nav-item .nav-icon { font-size: 22px; padding: 10px; }
+}

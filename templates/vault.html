@@ -1,0 +1,39 @@
+<!-- templates/vault.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My Vault</title>
+
+  <link rel="stylesheet" href="/static/css/Poppins.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/vault.css">
+</head>
+<body class="with-sidebar page-darker"> <!-- page-darker increases darkness + contrast -->
+
+  {{/* include sidebar partial (blobs + sidebar markup) */}}
+  {{template "sidebar" .}}
+
+  <main class="main-content">
+    <header class="vault-header">
+      <h1>My Vault</h1>
+      <form action="/vault/new" method="GET" style="display:inline;">
+          <button class="btn-primary" type="submit">+ New Item</button>
+      </form>
+    </header>
+
+    <div class="vault-grid">
+      <!-- {{template "box" .}} -->
+
+      {{template "modal" .}}
+
+      {{if .ShowModal}}
+      <script>
+          openModal(); // calls your existing function
+      </script>
+      {{end}}
+    </div>
+  </main>
+</body>
+</html>
