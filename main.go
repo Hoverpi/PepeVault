@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	// local imports
-	// "PepeVault/automation"
 	"PepeVault/config"
 	"PepeVault/db"
 	"PepeVault/routes"

@@ -14,10 +14,10 @@ type Config struct {
 
 func LoadConfig() Config {
 	return Config{
-		DBUser:     getEnv("DB_USER", "user"),
+		DBUser:     getEnv("DB_USER", "postgres"),
 		DBPassword: getEnv("DB_PASSWORD", "password"),
 		DBName:     getEnv("DB_NAME", "PepeVault"),
-		DBHost:     getEnv("DB_HOST", "192.168.122.74"),
+		DBHost:     getEnv("DB_HOST", "148.201.150.233"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 	}
 }

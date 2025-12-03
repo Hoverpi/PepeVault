@@ -1,9 +1,9 @@
 package middlewares
 
 import (
+	"PepeVault/auth"
 	"database/sql"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,12 +21,17 @@ func ValidateSession(db *sql.DB) gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-		var UserID string
-		var expires time.Time
-		err = db.QueryRow(`SELECT "User_ID", "Expires_at" FROM public."Sessions" WHERE "Token" = $1`, cookie).Scan(&UserID, &expires)
-		if err != nil || time.Now().After(expires) {
-			// invalid or expired session
-			_, _ = db.Exec(`DELETE FROM sessions WHERE token = $1`, cookie)
+
+		userID, err := auth.GetSessionUser(db, cookie)
+		if err != nil {
+			// if it's expired, remove it from DB and clear cookie
+			if err == auth.ErrSessionExpired {
+				_ = auth.DestroySession(ctx.Writer, db, cookie)
+			} else {
+				// could be sql.ErrNoRows or other DB error — ensure session deleted to be safe
+				_, _ = db.Exec(`DELETE FROM public."sessions" WHERE "token" = $1`, cookie)
+			}
+
 			if ctx.ContentType() == "application/json" {
 				ctx.JSON(http.StatusUnauthorized, gin.H{"error": "unauthenticated"})
 			} else {
@@ -36,7 +41,9 @@ func ValidateSession(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		ctx.Next()
+		// Attach user id to context for handlers that need it
+		ctx.Set("user_id", userID)
 
+		ctx.Next()
 	}
 }

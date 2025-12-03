@@ -1,0 +1,8 @@
+{
+    "go.languageServerFlags": [],
+    "go.toolsGopath": "",
+    "gopls": {},
+    "go.alternateTools": {},
+    "go.gopath": "",
+    "go.toolsManagement.autoUpdate": true
+}

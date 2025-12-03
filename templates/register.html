@@ -7,25 +7,23 @@
     <link rel="stylesheet" href="/static/css/all.min.css">
     <link rel="stylesheet" href="/static/css/Poppins.css">
     <link rel="stylesheet" href="/static/css/auth.css">
-
-    <script src="./scripts/Users.js"></script>
 </head>
 <body>
     <div class="background">
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form>
+    <form id="RegisterForm">
         <h3>Register Here</h3>
 
         <label for="username">Username</label>
-        <input type="text" placeholder="Email or Phone" id="username" name="user">
+        <input type="text" placeholder="User" id="username" name="username">
 
         <label for="password">Password</label>
-        <input type="password" placeholder="Password" id="password" name="pass">
+        <input type="password" placeholder="Password" id="password" name="password">
 
         <label for="confirm-password">Confirm Password</label>
-        <input type="password" placeholder="Confirm Password" id="confirm-password" name="confirm">
+        <input type="password" placeholder="Confirm Password" id="confirm-password" name="confirm-password">
 
         <button type="submit" class="btn submit">Register</button>
 
