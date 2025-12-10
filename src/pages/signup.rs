@@ -1,22 +1,42 @@
-use sycamore::prelude::*;
+use sycamore::{prelude::*, web::{rt::web_sys::SubmitEvent}, futures::spawn_local_scoped};
+use crate::components::alert::{Warning, Error, Success, Info};
+
+const BASE_URL: &str = "http://localhost:8080";
 
 #[component]
 pub fn SignupPage() -> View {
+    let show_password = create_signal(false);
+    let show_confirm_password = create_signal(false);
+    let show_warning = create_signal(None::<String>);
+
     let username = create_signal(String::new());
     let password = create_signal(String::new());
     let confirm_password = create_signal(String::new());
 
-    let show_password = create_signal(false);
-    let show_confirm_password = create_signal(false);
-    let on_submit = {
-        let username = username.clone();
-        let password = password.clone();
-        let confirm_password = confirm_password.clone();
-
+    let on_submit = move |ev: SubmitEvent| {
+        ev.prevent_default();
         
-    }
+        spawn_local_scoped(async move {
+            let user = username.clone();
+            let pass = password.clone();
+            let confirm_pass = confirm_password.clone();
+
+            show_warning.set(None);
+
+            if pass != confirm_pass {
+                show_warning.set(Some("Passwords do not match".to_string()));
+                return;
+            }
+        });
+    };
 
     view! {
+        (if let Some(msg) = show_warning.get_clone() {
+            view! { (Warning(msg.clone())) }
+        } else {
+            view! { }
+        })
+
         div(class="min-h-screen flex items-center justify-center bg-base-200 px-4") {
             div(class="w-full max-w-md bg-base-100 p-6 rounded-xl shadow-lg") {
                 h1(class="text-2xl font-bold text-center mb-4") { "Sign up" }
@@ -24,7 +44,7 @@ pub fn SignupPage() -> View {
                     "Welcome — Sign up to continue to PepeVault"
                 }
 
-                form(class="space-y-4", on:submit=on_submit) {
+                form(class="space-y-4") {
                     // Username: input with icon INSIDE the box (left)
                     div(class="form-control") {
                         label(class="label") {
@@ -45,8 +65,9 @@ pub fn SignupPage() -> View {
                                 r#type="text",
                                 name="username",
                                 placeholder="username",
+                                bind:value=username,
                                 required=true,
-                                pattern="[A-Za-z][A-Za-z0-9\\-]*",
+                                // pattern="[A-Za-z][A-Za-z0-9\\-]*",
                                 minlength="3",
                                 maxlength="30",
                                 title="3–30 chars: letters, numbers or dash"
@@ -77,9 +98,10 @@ pub fn SignupPage() -> View {
                                 r#type=if show_password.get() { "text" } else { "password" },
                                 name="password",
                                 placeholder="Password",
+                                bind:value=password,
                                 required=true,
                                 minlength="8",
-                                pattern="(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}",
+                                // pattern="(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}",
                                 title="At least 8 chars, with number, lower & upper case"
                             ) {}
 
@@ -126,9 +148,10 @@ pub fn SignupPage() -> View {
                                 r#type=if show_confirm_password.get() { "text" } else { "password" },
                                 name="confirm_password",
                                 placeholder="Confirm Password",
+                                bind:value=confirm_password,
                                 required=true,
                                 minlength="8",
-                                pattern="(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}",
+                                // pattern="(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}",
                                 title="At least 8 chars, with number, lower & upper case"
                             ) {}
 

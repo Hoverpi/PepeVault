@@ -1,5 +1,5 @@
 use sycamore::prelude::*;
-use kavalt::App;
+use pepevault::App;
 
 fn main() {
     sycamore::render(App);
